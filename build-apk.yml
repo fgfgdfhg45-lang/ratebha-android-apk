@@ -1,0 +1,51 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install packages
+        run: |
+          npm ci
+          npm install --no-save typescript
+
+      - name: Use the fixed signing key
+        run: |
+          mkdir -p ~/.android
+          echo "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" | base64 -d > ~/.android/debug.keystore
+
+      - name: Create the Android project
+        run: |
+          npx cap add android
+          pip install pillow
+          python3 scripts/customize_android.py
+          npx cap sync android
+
+      - name: Build the APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ratebha-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
